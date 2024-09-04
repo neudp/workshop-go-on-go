@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+/*
+Go имеет встроенный пакет net/http, который реализует все необходимое для работы с HTTP.
+*/
+
 func main() {
 	switch os.Args[1] {
 	case "basic":
@@ -19,6 +23,12 @@ func main() {
 	}
 }
 
+/*
+Для выполнения простых HTTP запросов используется функция http.Get().
+
+Это прокси для http.DefaultClient.Get().
+*/
+
 func basic() {
 	response, err := http.Get("https://golang.org")
 
@@ -30,6 +40,12 @@ func basic() {
 
 	fmt.Println(response.Status)
 }
+
+/*
+Для выполнения более сложных запросов используется структуры http.Client
+и http.Request. Это позволяет управлять различными аспектами запроса, такими как
+заголовки, методы, таймауты и т.д.
+*/
 
 func custom() {
 	client := &http.Client{}
@@ -53,6 +69,14 @@ func custom() {
 
 	fmt.Println(response.Status)
 }
+
+/*
+Для работы с куками используется структура http.Cookie.
+
+Куки могут быть установлены в запросе с помощью метода AddCookie() структуры http.Request.
+
+Получить куки из ответа можно с помощью метода Cookies() структуры http.Response.
+*/
 
 func cookies() {
 	client := &http.Client{}

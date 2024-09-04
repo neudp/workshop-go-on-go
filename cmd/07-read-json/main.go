@@ -6,6 +6,11 @@ import (
 	"os"
 )
 
+/*
+Для работы с JSON в Go используется пакет encoding/json.
+Как и в случае с переменными окружения, этот работает с помощью рефлексии.
+*/
+
 type Dto struct {
 	StringValue  string `json:"string"`
 	NumberValue  int    `json:"number"`
@@ -27,6 +32,10 @@ func main() {
 		return
 	}
 
+	// Unmarshal - функция, которая десериализует JSON в структуру.
+	// Marshal - функция, которая сериализует структуру в JSON.
+	//
+	// Важно: поля структуры должны быть экспортируемыми
 	if err := json.Unmarshal(content, dto); err != nil {
 		fmt.Println(err.Error())
 

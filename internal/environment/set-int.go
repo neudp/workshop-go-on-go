@@ -18,13 +18,13 @@ func setInt(value string, field *reflect.Value) error {
 }
 
 func setUint(value string, field *reflect.Value) error {
-	uintValue, err := strconv.ParseUint(value, 10, 64)
+	uintValue, err := strconv.Atoi(value)
 
 	if err != nil {
 		return err
 	}
 
-	field.SetUint(uintValue)
+	field.SetUint(uint64(uintValue))
 
 	return nil
 }
