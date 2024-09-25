@@ -1,6 +1,15 @@
 package main
 
-import "os"
+import (
+	"encoding/json"
+	"errors"
+	googleWire "goOnGo/cmd/09-dependency-injection/google-wire"
+	"goOnGo/cmd/09-dependency-injection/model"
+	uberFx "goOnGo/cmd/09-dependency-injection/uber-fx"
+	"goOnGo/cmd/09-dependency-injection/vanila"
+	"os"
+	"strings"
+)
 
 /*
 Dependency injection - это процесс предоставления зависимостей объекту.
@@ -20,15 +29,85 @@ Dependency injection - это процесс предоставления зав
   с функциями вместо структур
 */
 
+type GetCharacterApp interface {
+	GetCharacter(id string) (*model.Character, error)
+}
+
+func GetCharacterCommand(app GetCharacterApp) error {
+	character, err := app.GetCharacter(os.Args[2])
+
+	if err != nil {
+		return err
+	}
+
+	if character == nil {
+		return errors.New("character not found")
+	}
+
+	terrains := make([]string, len(character.Homeworld().Terrains()))
+
+	for i, terrain := range character.Homeworld().Terrains() {
+		terrains[i] = string(terrain)
+	}
+
+	dto := CharacterDto{
+		Name:      character.Name(),
+		Height:    character.Height(),
+		Mass:      character.Mass(),
+		HairColor: string(character.HairColor()),
+		SkinColor: string(character.SkinColor()),
+		EyeColor:  string(character.EyeColor()),
+		BirthYear: string(character.BirthYear()),
+		Gender:    string(character.Gender()),
+		Homeworld: HomeworldDto{
+			Name:    character.Homeworld().Name(),
+			Climate: string(character.Homeworld().Climate()),
+			Terrain: strings.Join(terrains, ", "),
+		},
+	}
+
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+
+	if err = encoder.Encode(dto); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func main() {
 	switch os.Args[1] {
 	case "vanila":
-		vanila()
+		app, err := vanila.NewApp()
+
+		if err != nil {
+			panic(err)
+		}
+
+		if err := GetCharacterCommand(app); err != nil {
+			panic(err)
+		}
 	case "wire":
-		wire()
+		app, err := googleWire.NewApp()
+
+		if err != nil {
+			panic(err)
+		}
+
+		if err := GetCharacterCommand(app); err != nil {
+			panic(err)
+		}
 	case "fx":
-		fx()
+		err := uberFx.Run(func(app *uberFx.App) error {
+			return GetCharacterCommand(app)
+		})
+
+		if err != nil {
+			panic(err)
+		}
 	default:
 		println("Invalid argument")
 	}
+
 }

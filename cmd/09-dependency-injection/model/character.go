@@ -1,4 +1,4 @@
-package swapi
+package model
 
 type Color string
 type BirthYear string
@@ -6,8 +6,8 @@ type Gender string
 
 type Character struct {
 	name      string
-	height    int
-	mass      int
+	height    *int
+	mass      *float64
 	hairColor Color
 	skinColor Color
 	eyeColor  Color
@@ -18,8 +18,8 @@ type Character struct {
 
 func NewCharacter(
 	name string,
-	height,
-	mass int,
+	height *int,
+	mass *float64,
 	hairColor,
 	skinColor,
 	eyeColor Color,
@@ -44,11 +44,11 @@ func (character *Character) Name() string {
 	return character.name
 }
 
-func (character *Character) Height() int {
+func (character *Character) Height() *int {
 	return character.height
 }
 
-func (character *Character) Mass() int {
+func (character *Character) Mass() *float64 {
 	return character.mass
 }
 

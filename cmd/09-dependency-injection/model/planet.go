@@ -1,31 +1,31 @@
-package swapi
+package model
 
 type Climate string
-type Gravity float64
+type Gravity string
 type Biom string
 
 type Planet struct {
 	name           string
-	rotationPeriod int
-	orbitalPeriod  int
-	diameter       int
+	rotationPeriod *int
+	orbitalPeriod  *int
+	diameter       *int
 	climate        Climate
 	gravity        Gravity
 	terrains       []Biom
-	surfaceWater   int
-	population     int
+	surfaceWater   *float64
+	population     *int
 }
 
 func NewPlanet(
 	name string,
 	rotationPeriod,
 	orbitalPeriod,
-	diameter int,
+	diameter *int,
 	climate Climate,
 	gravity Gravity,
 	terrains []Biom,
-	surfaceWater,
-	population int,
+	surfaceWater *float64,
+	population *int,
 ) *Planet {
 	return &Planet{
 		name:           name,
@@ -44,15 +44,15 @@ func (p *Planet) Name() string {
 	return p.name
 }
 
-func (p *Planet) RotationPeriod() int {
+func (p *Planet) RotationPeriod() *int {
 	return p.rotationPeriod
 }
 
-func (p *Planet) OrbitalPeriod() int {
+func (p *Planet) OrbitalPeriod() *int {
 	return p.orbitalPeriod
 }
 
-func (p *Planet) Diameter() int {
+func (p *Planet) Diameter() *int {
 	return p.diameter
 }
 
@@ -68,10 +68,10 @@ func (p *Planet) Terrains() []Biom {
 	return p.terrains
 }
 
-func (p *Planet) SurfaceWater() int {
+func (p *Planet) SurfaceWater() *float64 {
 	return p.surfaceWater
 }
 
-func (p *Planet) Population() int {
+func (p *Planet) Population() *int {
 	return p.population
 }

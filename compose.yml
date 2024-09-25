@@ -1,0 +1,15 @@
+volumes:
+  pg-data: ~
+
+services:
+  go-on-go:
+    image: ${IMAGE:-go-on-go:latest}
+    build:
+        context: .
+        dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+        - .:/usr/src/app
