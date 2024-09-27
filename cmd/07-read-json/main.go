@@ -11,18 +11,30 @@ import (
 Как и в случае с переменными окружения, этот работает с помощью рефлексии.
 */
 
+type Nested struct {
+	Key string `json:"key"`
+}
+
 type Dto struct {
 	StringValue  string `json:"string"`
 	NumberValue  int    `json:"number"`
 	BooleanValue bool   `json:"boolean"`
 	ArrayValue   []int  `json:"array"`
-	ObjectValue  struct {
-		Key string `json:"key"`
-	} `json:"object"`
+	ObjectValue  Nested `json:"object"`
+}
+
+func (dto *Dto) IsValid() bool {
+	return dto.StringValue != "" && dto.NumberValue != 0
+}
+
+func Required(getter func() string) bool {
+	value := getter()
+
+	return value != ""
 }
 
 func main() {
-	dto := new(Dto)
+	dto := new(Dto) // = &Dto{}
 
 	content, err := os.ReadFile("example.json")
 
@@ -42,5 +54,13 @@ func main() {
 		return
 	}
 
-	fmt.Printf("%+v\n", dto)
+	if !Required(func() string {
+		return dto.StringValue
+	}) {
+		fmt.Println("StringValue is required")
+	}
+
+	body, err := json.MarshalIndent(dto, "", "    ")
+
+	fmt.Printf("%s\n", body)
 }

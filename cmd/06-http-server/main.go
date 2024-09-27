@@ -10,14 +10,23 @@ net/http так же содержит простой в использовани
 не поддерживал паттерны, и для роутинга использовался пакет gorilla/mux.
 */
 
+func Hello(writer http.ResponseWriter, request *http.Request) {
+	_, err := writer.Write([]byte(fmt.Sprintf("Hello, %s!\n", request.PathValue("path"))))
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+}
+
 func main() {
+	// gorilla/mux
 	server := http.NewServeMux() // с версии 1.22 можно использовать http.NewServeMux()
 
 	// Обработка запросов по пути "/"
 	server.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		// Крайне неочевидный момент - "/" обратывает все запросы, для которых хендлер не был найден
 		if request.URL.Path != "/" {
-			http.NotFound(writer, request)
+			writer.Write([]byte(request.URL.Path + " not found"))
 
 			return
 		}
@@ -42,13 +51,7 @@ func main() {
 	// Обработка запросов по пути "/{path}"
 	// /best обработается хендлером выше, так как он более конкретный
 	// Порядок объявления хендлеров не важен
-	server.HandleFunc("/{path}", func(writer http.ResponseWriter, request *http.Request) {
-		_, err := writer.Write([]byte(fmt.Sprintf("Hello, %s!\n", request.PathValue("path"))))
-
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-	})
+	server.HandleFunc("/{path}", Hello)
 
 	// кроме HandleFunc, есть еще Handle, который позволяет использовать реализацию
 	//интерфейса http.Handler, например, http.FileServer для обработки

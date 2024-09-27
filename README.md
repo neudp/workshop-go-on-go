@@ -11,16 +11,20 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 - [X] Hello World, Monoprocess application
 - [X] Command line application
 - [X] Environment variables
-- [X] HTTP client
+- [X] HTTP client  (check for best practices, FastHTTP)
 - [X] HTTP server
 - [X] Serialization
 - [X] Handling HTTP requests
-- [X] Dependency injection
+- [X] Dependency injection (vanilla deep) <-
 - [ ] Testing
-- [ ] Concurrency
 - [ ] sql package
 - [ ] ORM
 - [ ] Handling errors
+- [ ] Websockets
+- [ ] gRPC server and protobuf
+- [ ] Concurrency
+- [ ] Memory management
+- [ ] go work
 
 ## Prerequisites
 if you have go installed, you can use it. 

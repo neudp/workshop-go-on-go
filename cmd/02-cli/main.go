@@ -5,6 +5,7 @@ github.com/spf13/cobra - это библиотека для создания CLI
 Она предоставляет простой и удобный интерфейс для создания команд и флагов.
 */
 import (
+	"context"
 	"github.com/spf13/cobra"
 )
 
@@ -141,7 +142,7 @@ func main() {
 	rootCmd.AddCommand(helloCmd)
 	rootCmd.AddCommand(makeRepeatCmd())
 
-	err := rootCmd.Execute()
+	err := rootCmd.ExecuteContext(context.Background())
 
 	if err != nil {
 		println(err.Error())

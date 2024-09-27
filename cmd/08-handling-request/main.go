@@ -42,6 +42,7 @@ func main() {
 		// или других методов чтения байтовых стримов
 		bodyReader := request.Body
 		bodyBytes, err := io.ReadAll(bodyReader)
+		_ = request.Body.Close()
 
 		// writer - интерфейс для записи ответа
 		// writer.Header().Set(name, value string) - устанавливает заголовок ответа

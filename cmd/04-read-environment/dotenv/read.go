@@ -26,7 +26,7 @@ type Environment struct {
 func ReadEnv() (*Environment, error) {
 	env := new(Environment)
 
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load(".env", ".local.env"); err != nil {
 		return nil, err
 	}
 
