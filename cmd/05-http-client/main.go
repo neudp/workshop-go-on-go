@@ -47,8 +47,10 @@ func basic() {
 заголовки, методы, таймауты и т.д.
 */
 
+// http.DefaultClient - глобальный клиент по умолчанию
+var client = &http.Client{} // можно создать свой клиент
+
 func custom() {
-	client := &http.Client{}
 	request, err := http.NewRequest(http.MethodGet, "https://golang.org", nil)
 
 	if err != nil {
@@ -79,7 +81,6 @@ func custom() {
 */
 
 func cookies() {
-	client := &http.Client{}
 	request, err := http.NewRequest(http.MethodGet, "https://google.com", nil)
 
 	if err != nil {

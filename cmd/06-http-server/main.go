@@ -11,7 +11,7 @@ net/http так же содержит простой в использовани
 */
 
 func main() {
-	server := http.NewServeMux()
+	server := http.NewServeMux() // с версии 1.22 можно использовать http.NewServeMux()
 
 	// Обработка запросов по пути "/"
 	server.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
