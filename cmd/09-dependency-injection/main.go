@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	googleWire "goOnGo/cmd/09-dependency-injection/google-wire"
-	"goOnGo/cmd/09-dependency-injection/model"
 	uberFx "goOnGo/cmd/09-dependency-injection/uber-fx"
 	"goOnGo/cmd/09-dependency-injection/vanila"
+	"goOnGo/internal/swapi/model"
 	"os"
 	"strings"
 )

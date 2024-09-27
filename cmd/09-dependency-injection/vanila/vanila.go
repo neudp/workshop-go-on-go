@@ -2,11 +2,11 @@ package vanila
 
 import (
 	"fmt"
-	"goOnGo/cmd/09-dependency-injection/config"
-	"goOnGo/cmd/09-dependency-injection/model"
-	"goOnGo/cmd/09-dependency-injection/swapi"
-	"goOnGo/cmd/09-dependency-injection/transport"
-	useCase "goOnGo/cmd/09-dependency-injection/use-case"
+	"goOnGo/internal/swapi/config"
+	"goOnGo/internal/swapi/model"
+	"goOnGo/internal/swapi/swapi"
+	"goOnGo/internal/swapi/transport"
+	"goOnGo/internal/swapi/use-case"
 	"strconv"
 	"strings"
 	"time"

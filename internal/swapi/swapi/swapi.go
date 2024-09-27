@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"goOnGo/cmd/09-dependency-injection/model"
+	model2 "goOnGo/internal/swapi/model"
 	"net/http"
 	"strings"
 )
@@ -15,26 +15,26 @@ type Transport interface {
 
 type Swapi struct {
 	transport Transport
-	logger    model.Logger
+	logger    model2.Logger
 }
 
-func New(transport Transport, logger model.Logger) *Swapi {
+func New(transport Transport, logger model2.Logger) *Swapi {
 	return &Swapi{transport: transport, logger: logger}
 }
 
-func (swapi *Swapi) GetPlanets() ([]*model.Planet, error) {
+func (swapi *Swapi) GetPlanets() ([]*model2.Planet, error) {
 	return swapi.getPlanets("https://swapi.dev/api/planets/")
 }
 
-func (swapi *Swapi) GetPlanet(id int) (*model.Planet, error) {
+func (swapi *Swapi) GetPlanet(id int) (*model2.Planet, error) {
 	return swapi.getPlanet(fmt.Sprintf("https://swapi.dev/api/planets/%d/", id))
 }
 
-func (swapi *Swapi) GetCharacter(id int) (*model.Character, error) {
+func (swapi *Swapi) GetCharacter(id int) (*model2.Character, error) {
 	return swapi.getCharacter(fmt.Sprintf("https://swapi.dev/api/people/%d/", id))
 }
 
-func (swapi *Swapi) GetPeople() ([]*model.Character, error) {
+func (swapi *Swapi) GetPeople() ([]*model2.Character, error) {
 	return swapi.getPeople("https://swapi.dev/api/people/")
 }
 
@@ -49,7 +49,7 @@ func (swapi *Swapi) get(url string) (*http.Response, error) {
 	return swapi.transport.Do(request)
 }
 
-func (swapi *Swapi) getPlanet(url string) (planet *model.Planet, err error) {
+func (swapi *Swapi) getPlanet(url string) (planet *model2.Planet, err error) {
 	response, err := swapi.get(url)
 	if err != nil {
 		swapi.logger.Errorf("error getting planet (%s): %v", url, err)
@@ -93,7 +93,7 @@ func (swapi *Swapi) getPlanet(url string) (planet *model.Planet, err error) {
 	return planet, nil
 }
 
-func (swapi *Swapi) toPlanet(dto *planetDto) (*model.Planet, error) {
+func (swapi *Swapi) toPlanet(dto *planetDto) (*model2.Planet, error) {
 	rotationPeriod, err := parseInt(dto.RotationPeriod)
 
 	if err != nil {
@@ -119,10 +119,10 @@ func (swapi *Swapi) toPlanet(dto *planetDto) (*model.Planet, error) {
 	}
 
 	terrains := strings.Split(dto.Terrain, ",")
-	bioms := make([]model.Biom, len(terrains))
+	bioms := make([]model2.Biom, len(terrains))
 
 	for i, terrain := range terrains {
-		bioms[i] = model.Biom(strings.TrimSpace(terrain))
+		bioms[i] = model2.Biom(strings.TrimSpace(terrain))
 	}
 
 	surfaceWater, err := parseFloat(dto.SurfaceWater)
@@ -141,21 +141,21 @@ func (swapi *Swapi) toPlanet(dto *planetDto) (*model.Planet, error) {
 		return nil, err
 	}
 
-	return model.NewPlanet(
+	return model2.NewPlanet(
 		dto.Name,
 		rotationPeriod,
 		orbitalPeriod,
 		diameter,
-		model.Climate(dto.Climate),
-		model.Gravity(dto.Gravity),
+		model2.Climate(dto.Climate),
+		model2.Gravity(dto.Gravity),
 		bioms,
 		surfaceWater,
 		population,
 	), nil
 }
 
-func (swapi *Swapi) getPlanets(url string) ([]*model.Planet, error) {
-	planets := make([]*model.Planet, 0)
+func (swapi *Swapi) getPlanets(url string) ([]*model2.Planet, error) {
+	planets := make([]*model2.Planet, 0)
 
 	var next = &url
 	for next != nil {
@@ -187,7 +187,7 @@ func (swapi *Swapi) getPlanets(url string) ([]*model.Planet, error) {
 		swapi.logger.Infof("getPlanets decode done")
 
 		for index, item := range dto.Results {
-			var planet *model.Planet
+			var planet *model2.Planet
 			planet, err = swapi.toPlanet(&item)
 
 			if err != nil {
@@ -213,7 +213,7 @@ func (swapi *Swapi) getPlanets(url string) ([]*model.Planet, error) {
 	return planets, nil
 }
 
-func (swapi *Swapi) getCharacter(url string) (character *model.Character, err error) {
+func (swapi *Swapi) getCharacter(url string) (character *model2.Character, err error) {
 	response, err := swapi.get(url)
 	if err != nil {
 		swapi.logger.Errorf("error getting character (%s): %v", url, err)
@@ -258,7 +258,7 @@ func (swapi *Swapi) getCharacter(url string) (character *model.Character, err er
 	return character, nil
 }
 
-func (swapi *Swapi) toCharacter(dto *characterDto) (*model.Character, error) {
+func (swapi *Swapi) toCharacter(dto *characterDto) (*model2.Character, error) {
 	height, err := parseInt(dto.Height)
 	if err != nil {
 		swapi.logger.Errorf("error height: %v", err)
@@ -281,21 +281,21 @@ func (swapi *Swapi) toCharacter(dto *characterDto) (*model.Character, error) {
 		return nil, err
 	}
 
-	return model.NewCharacter(
+	return model2.NewCharacter(
 		dto.Name,
 		height,
 		mass,
-		model.Color(dto.HairColor),
-		model.Color(dto.SkinColor),
-		model.Color(dto.EyeColor),
-		model.BirthYear(dto.BirthYear),
-		model.Gender(dto.Gender),
+		model2.Color(dto.HairColor),
+		model2.Color(dto.SkinColor),
+		model2.Color(dto.EyeColor),
+		model2.BirthYear(dto.BirthYear),
+		model2.Gender(dto.Gender),
 		homeworld,
 	), nil
 }
 
-func (swapi *Swapi) getPeople(url string) ([]*model.Character, error) {
-	characters := make([]*model.Character, 0)
+func (swapi *Swapi) getPeople(url string) ([]*model2.Character, error) {
+	characters := make([]*model2.Character, 0)
 
 	var next = &url
 	for next != nil {
@@ -327,7 +327,7 @@ func (swapi *Swapi) getPeople(url string) ([]*model.Character, error) {
 		swapi.logger.Infof("getPeople decode done")
 
 		for index, item := range dto.Results {
-			var character *model.Character
+			var character *model2.Character
 			character, err = swapi.toCharacter(&item)
 
 			if err != nil {

@@ -1,8 +1,8 @@
 package transport
 
 import (
-	"goOnGo/cmd/09-dependency-injection/config"
-	"goOnGo/cmd/09-dependency-injection/model"
+	"goOnGo/internal/swapi/config"
+	"goOnGo/internal/swapi/model"
 	"net/http"
 	"net/url"
 )

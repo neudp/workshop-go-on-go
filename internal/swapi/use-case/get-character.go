@@ -1,7 +1,7 @@
 package useCase
 
 import (
-	"goOnGo/cmd/09-dependency-injection/model"
+	model2 "goOnGo/internal/swapi/model"
 )
 
 type GetCharacterQuery struct {
@@ -13,22 +13,22 @@ func NewGetCharacterQuery(id int) *GetCharacterQuery {
 }
 
 type GetCharacterClient interface {
-	GetCharacter(id int) (*model.Character, error)
+	GetCharacter(id int) (*model2.Character, error)
 }
 
 type GetCharacterHandler struct {
 	client GetCharacterClient
-	logger model.Logger
+	logger model2.Logger
 }
 
-func NewGetCharacterHandler(client GetCharacterClient, logger model.Logger) *GetCharacterHandler {
+func NewGetCharacterHandler(client GetCharacterClient, logger model2.Logger) *GetCharacterHandler {
 	return &GetCharacterHandler{
 		client: client,
 		logger: logger,
 	}
 }
 
-func (handler *GetCharacterHandler) Handle(query *GetCharacterQuery) (*model.Character, error) {
+func (handler *GetCharacterHandler) Handle(query *GetCharacterQuery) (*model2.Character, error) {
 	handler.logger.Infof("Get character with id %d", query.id)
 
 	return handler.client.GetCharacter(query.id)

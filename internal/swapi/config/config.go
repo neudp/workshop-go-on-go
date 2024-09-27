@@ -1,8 +1,8 @@
 package config
 
 import (
-	"goOnGo/cmd/09-dependency-injection/model"
 	"goOnGo/internal/environment"
+	"goOnGo/internal/swapi/model"
 )
 
 type Config struct {
