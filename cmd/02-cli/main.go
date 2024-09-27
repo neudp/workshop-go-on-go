@@ -50,6 +50,12 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		println("Go on Go")
 
+		verbose, _ := cmd.Flags().GetBool("verbose")
+
+		if verbose {
+			println("Verbose output")
+		}
+
 		for _, arg := range args {
 			println(arg)
 		}
@@ -64,6 +70,12 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of Go on Go",
 	Long:  `Print the version number of Go on Go`,
 	Run: func(cmd *cobra.Command, args []string) {
+		verbose, _ := cmd.Flags().GetString("verbose")
+
+		if verbose == "true" {
+			println("Verbose output")
+		}
+
 		println("Go on Go v1.0.0")
 	},
 }
@@ -122,6 +134,9 @@ func makeRepeatCmd() *cobra.Command {
 Execute() запускает выполнение команды и передает управление в соответствующую логику выполнения.
 */
 func main() {
+	rootCmd.Flags().BoolP("verbose", "v", false, "Verbose output")
+	versionCmd.Flags().StringP("verbose", "v", "false", "Verbose output")
+
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(helloCmd)
 	rootCmd.AddCommand(makeRepeatCmd())
