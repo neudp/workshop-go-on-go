@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 - [X] Handling HTTP requests
 - [X] Dependency injection (vanilla deep) <-
 - [X] Testing
-- [ ] Handling errors
+- [X] Handling errors
 - [ ] sql package
 - [ ] ORM
 - [ ] Websockets
