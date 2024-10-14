@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"goOnGo/cmd/09-dependency-injection/functional"
 	googleWire "goOnGo/cmd/09-dependency-injection/google-wire"
 	uberFx "goOnGo/cmd/09-dependency-injection/uber-fx"
 	"goOnGo/cmd/09-dependency-injection/vanila"
@@ -104,6 +105,45 @@ func main() {
 		})
 
 		if err != nil {
+			panic(err)
+		}
+	case "func":
+		character, err := functional.GetCharacter(os.Args[2])
+
+		if err != nil {
+			panic(err)
+		}
+
+		if character == nil {
+			panic("character not found")
+		}
+
+		terrains := make([]string, len(character.Homeworld().Terrains()))
+
+		for i, terrain := range character.Homeworld().Terrains() {
+			terrains[i] = string(terrain)
+		}
+
+		dto := CharacterDto{
+			Name:      character.Name(),
+			Height:    character.Height(),
+			Mass:      character.Mass(),
+			HairColor: string(character.HairColor()),
+			SkinColor: string(character.SkinColor()),
+			EyeColor:  string(character.EyeColor()),
+			BirthYear: string(character.BirthYear()),
+			Gender:    string(character.Gender()),
+			Homeworld: HomeworldDto{
+				Name:    character.Homeworld().Name(),
+				Climate: string(character.Homeworld().Climate()),
+				Terrain: strings.Join(terrains, ", "),
+			},
+		}
+
+		encoder := json.NewEncoder(os.Stdout)
+		encoder.SetIndent("", "  ")
+
+		if err = encoder.Encode(dto); err != nil {
 			panic(err)
 		}
 	default:
