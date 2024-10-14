@@ -16,10 +16,10 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 - [X] Serialization
 - [X] Handling HTTP requests
 - [X] Dependency injection (vanilla deep) <-
-- [ ] Testing
+- [X] Testing
+- [ ] Handling errors
 - [ ] sql package
 - [ ] ORM
-- [ ] Handling errors
 - [ ] Websockets
 - [ ] gRPC server and protobuf
 - [ ] Concurrency
