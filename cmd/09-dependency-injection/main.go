@@ -80,7 +80,7 @@ func GetCharacterCommand(app GetCharacterApp) error {
 func main() {
 	switch os.Args[1] {
 	case "vanila":
-		app, err := vanila.NewApp()
+		app, err := vanila.NewApp(true)
 
 		if err != nil {
 			panic(err)

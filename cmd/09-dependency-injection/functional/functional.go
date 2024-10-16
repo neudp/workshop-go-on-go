@@ -1,6 +1,7 @@
 package functional
 
 import (
+	appContext "goOnGo/internal/swapi-func/infrastructure/app-context"
 	"goOnGo/internal/swapi-func/model/domain/character"
 	"goOnGo/internal/swapi-func/use-case/swapi"
 	"strconv"
@@ -13,7 +14,11 @@ func GetCharacter(id string) (*character.Character, error) {
 		return nil, err
 	}
 
-	query := swapi.NewGetCharacterQuery(idInt)
+	ctx, err := appContext.New()
 
-	return swapi.GetCharacter(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return swapi.GetCharacter(ctx, swapi.NewGetCharacterQuery(idInt))
 }

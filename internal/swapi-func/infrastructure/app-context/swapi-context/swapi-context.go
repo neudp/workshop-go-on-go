@@ -13,17 +13,17 @@ SwapiContext - это не "объект" в понимании ООП, это �
 */
 
 type SwapiContext struct {
-	loggingCtx   logging.Context
-	transportCtx transport.DoSwapiRequestContext
+	loggingCtx logging.Context
+	swapiURL   string
 }
 
 func New(
+	swapiURL string,
 	loggingCtx logging.Context,
-	transportCtx transport.DoSwapiRequestContext,
 ) *SwapiContext {
 	return &SwapiContext{
-		loggingCtx:   loggingCtx,
-		transportCtx: transportCtx,
+		swapiURL:   swapiURL,
+		loggingCtx: loggingCtx,
 	}
 }
 
@@ -35,6 +35,10 @@ func (ctx *SwapiContext) LogError(message string) {
 	logging.Error(ctx.loggingCtx, message)
 }
 
+func (ctx *SwapiContext) SwapiURL() string {
+	return ctx.swapiURL
+}
+
 func (ctx *SwapiContext) DoRequest(request *http.Request) (*http.Response, error) {
-	return transport.DoSwapiRequest(ctx.transportCtx, request)
+	return transport.DoSwapiRequest(ctx, request)
 }

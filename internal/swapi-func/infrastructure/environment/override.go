@@ -1,4 +1,4 @@
-package os
+package environment
 
 /*
 Go не поддерживает дефолтные значения для аргументов функций, но можно использовать функции-обертки
@@ -15,16 +15,16 @@ Go не поддерживает дефолтные значения для ар
 Каррирование и композиция - это два основных метода функционального программирования
 */
 
-type EnvironmentOverride func(value *appEnvValues) *appEnvValues
+type Override func(value *appEnvValues) *appEnvValues
 
-func OverrideSwapiURL(url string) EnvironmentOverride {
+func OverrideSwapiURL(url string) Override {
 	return func(value *appEnvValues) *appEnvValues {
 		value.SwapiURL = url
 		return value
 	}
 }
 
-func OverrideMinLogLevel(level string) EnvironmentOverride {
+func OverrideMinLogLevel(level string) Override {
 	return func(value *appEnvValues) *appEnvValues {
 		value.MinLogLevel = level
 		return value

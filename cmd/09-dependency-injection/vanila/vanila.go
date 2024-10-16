@@ -26,9 +26,15 @@ import (
 проще и безопаснее.
 */
 
-type Logger struct{}
+type Logger struct {
+	enabled bool
+}
 
-func (l *Logger) Infof(format string, args ...interface{}) {
+func (logger *Logger) Infof(format string, args ...interface{}) {
+	if !logger.enabled {
+		return
+	}
+
 	if !strings.HasSuffix(format, "\n") {
 		format += "\n"
 	}
@@ -36,7 +42,11 @@ func (l *Logger) Infof(format string, args ...interface{}) {
 	fmt.Printf(time.Now().Format("2006-01-02 15-04-05.000")+" INFO: "+format, args...)
 }
 
-func (l *Logger) Errorf(format string, args ...interface{}) {
+func (logger *Logger) Errorf(format string, args ...interface{}) {
+	if !logger.enabled {
+		return
+	}
+
 	if !strings.HasSuffix(format, "\n") {
 		format += "\n"
 	}
@@ -49,8 +59,8 @@ type App struct {
 	logger *Logger
 }
 
-func NewApp() (*App, error) {
-	logger := &Logger{}
+func NewApp(log bool) (*App, error) {
+	logger := &Logger{enabled: log}
 	cfg, err := config.Build(logger)
 
 	if err != nil {
