@@ -1,7 +1,7 @@
 package useCase
 
 import (
-	model2 "goOnGo/internal/swapi/model"
+	"goOnGo/internal/swapi/model"
 )
 
 type GetCharacterQuery struct {
@@ -13,23 +13,39 @@ func NewGetCharacterQuery(id int) *GetCharacterQuery {
 }
 
 type GetCharacterClient interface {
-	GetCharacter(id int) (*model2.Character, error)
+	GetCharacter(id int) (*model.Character, error)
 }
 
 type GetCharacterHandler struct {
 	client GetCharacterClient
-	logger model2.Logger
+	logger model.Logger
 }
 
-func NewGetCharacterHandler(client GetCharacterClient, logger model2.Logger) *GetCharacterHandler {
+func NewGetCharacterHandler(client GetCharacterClient, logger model.Logger) *GetCharacterHandler {
 	return &GetCharacterHandler{
 		client: client,
 		logger: logger,
 	}
 }
 
-func (handler *GetCharacterHandler) Handle(query *GetCharacterQuery) (*model2.Character, error) {
+func (handler *GetCharacterHandler) Handle(query *GetCharacterQuery) (*CharacterDto, error) {
 	handler.logger.Infof("Get character with id %d", query.id)
 
-	return handler.client.GetCharacter(query.id)
+	chrctr, err := handler.client.GetCharacter(query.id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &CharacterDto{
+		Name:      chrctr.Name(),
+		Height:    chrctr.Height(),
+		Mass:      chrctr.Mass(),
+		HairColor: string(chrctr.HairColor()),
+		SkinColor: string(chrctr.SkinColor()),
+		EyeColor:  string(chrctr.EyeColor()),
+		BirthYear: string(chrctr.BirthYear()),
+		Gender:    string(chrctr.Gender()),
+		Homeworld: chrctr.Homeworld().Name(),
+	}, nil
 }

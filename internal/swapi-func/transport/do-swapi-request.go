@@ -2,38 +2,38 @@ package transport
 
 import (
 	"fmt"
+	"goOnGo/internal/swapi-func/model/logging"
 	"net/http"
 	"net/url"
 	"time"
 )
 
-type DoSwapiRequestContext interface {
-	SwapiURL() string
-	LogInfo(message string)
-	LogError(message string)
-}
+type DoSwapiRequest = func(*http.Request) (*http.Response, error)
 
 var client = &http.Client{
 	Timeout: 30 * time.Second,
 }
 
-func DoSwapiRequest(ctx DoSwapiRequestContext, request *http.Request) (*http.Response, error) {
-	// Если хост не указан, то URL считается относительным
-	if request.URL.Host == "" {
-		ctx.LogInfo(fmt.Sprintf("INFO: URL is relative, adding base URL: %s", ctx.SwapiURL()))
-		swapiURL := ctx.SwapiURL()
+func NewDoSwapiRequest(logLevel logging.LogLevel, swapiUrl string) DoSwapiRequest {
+	logInfo := logging.NewLog(logLevel, logging.Info)
+	logError := logging.NewLog(logLevel, logging.Error)
 
-		var err error
-		request.URL, err = url.Parse(swapiURL + request.URL.String())
+	return func(request *http.Request) (*http.Response, error) {
+		if request.URL.Host == "" {
+			logInfo(fmt.Sprintf("INFO: URL is relative, adding base URL: %s", swapiUrl))
 
-		if err != nil {
-			ctx.LogError(fmt.Sprintf("ERROR: failed to parse URL: %v", err))
+			var err error
+			request.URL, err = url.Parse(swapiUrl + request.URL.String())
 
-			return nil, err
+			if err != nil {
+				logError(fmt.Sprintf("ERROR: failed to parse URL: %v", err))
+
+				return nil, err
+			}
 		}
+
+		logInfo(fmt.Sprintf("INFO: sending request to %s", request.URL.String()))
+
+		return client.Do(request)
 	}
-
-	ctx.LogInfo(fmt.Sprintf("INFO: sending request to %s", request.URL.String()))
-
-	return client.Do(request)
 }

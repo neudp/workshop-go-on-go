@@ -1,19 +1,36 @@
 package swapi
 
 import (
-	appContext "goOnGo/internal/swapi-func/infrastructure/app-context"
-	"goOnGo/internal/swapi-func/model/domain/character"
-	"goOnGo/internal/swapi-func/swapi"
+	"goOnGo/internal/swapi-func/application/swapi"
+	"goOnGo/internal/swapi-func/model/logging"
 )
 
 type GetCharacterQuery struct {
-	id int
+	Id int `json:"id"`
 }
 
-func NewGetCharacterQuery(id int) *GetCharacterQuery {
-	return &GetCharacterQuery{id: id}
-}
+type GetCharacter = func(query *GetCharacterQuery) (*CharacterDto, error)
 
-func GetCharacter(ctx *appContext.AppContext, query *GetCharacterQuery) (*character.Character, error) {
-	return swapi.GetCharacter(ctx.SwapiContext(), query.id)
+func NewGetCharacter(logLevel logging.LogLevel, request swapi.DoRequest) GetCharacter {
+	getSwapiCharacter := swapi.NewGetCharacter(logLevel, request)
+
+	return func(query *GetCharacterQuery) (*CharacterDto, error) {
+		chrctr, err := getSwapiCharacter(query.Id)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return &CharacterDto{
+			Name:      chrctr.Name(),
+			Height:    chrctr.Height(),
+			Mass:      chrctr.Mass(),
+			HairColor: string(chrctr.HairColor()),
+			SkinColor: string(chrctr.SkinColor()),
+			EyeColor:  string(chrctr.EyeColor()),
+			BirthYear: string(chrctr.BirthYear()),
+			Gender:    string(chrctr.Gender()),
+			Homeworld: chrctr.Homeworld().Name(),
+		}, nil
+	}
 }

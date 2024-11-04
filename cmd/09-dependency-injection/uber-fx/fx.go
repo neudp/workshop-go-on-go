@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go.uber.org/fx"
 	"goOnGo/internal/swapi/config"
-	model2 "goOnGo/internal/swapi/model"
+	"goOnGo/internal/swapi/model"
 	"goOnGo/internal/swapi/swapi"
 	"goOnGo/internal/swapi/transport"
 	"goOnGo/internal/swapi/use-case"
@@ -46,19 +46,19 @@ type SwapiTransportProvider func() swapi.Transport                   // фабр
 type SwapiClientProvider func() *swapi.Swapi                         // фабричный метод
 type GetCharacterHandlerProvider func() *useCase.GetCharacterHandler // фабричный метод
 
-func ProvideSwapiTransport(cfg *config.Config, logger model2.Logger) SwapiTransportProvider {
+func ProvideSwapiTransport(cfg *config.Config, logger model.Logger) SwapiTransportProvider {
 	return func() swapi.Transport {
 		return transport.NewSwapiClient(cfg, logger)
 	}
 }
 
-func ProvideSwapiClient(transport SwapiTransportProvider, logger model2.Logger) SwapiClientProvider {
+func ProvideSwapiClient(transport SwapiTransportProvider, logger model.Logger) SwapiClientProvider {
 	return func() *swapi.Swapi {
 		return swapi.New(transport(), logger)
 	}
 }
 
-func ProvideCharacterHandler(client SwapiClientProvider, logger model2.Logger) GetCharacterHandlerProvider {
+func ProvideCharacterHandler(client SwapiClientProvider, logger model.Logger) GetCharacterHandlerProvider {
 	return func() *useCase.GetCharacterHandler {
 		return useCase.NewGetCharacterHandler(client(), logger)
 	}
@@ -74,7 +74,7 @@ func NewApp(characterHandler GetCharacterHandlerProvider) *App {
 	}
 }
 
-func (app *App) GetCharacter(id string) (*model2.Character, error) {
+func (app *App) GetCharacter(id string) (*useCase.CharacterDto, error) {
 	idInt, err := strconv.Atoi(id)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func Run(do func(*App) error) error {
 	app := fx.New(
 		fx.Provide(fx.Annotate(
 			NewLogger,
-			fx.As(new(model2.Logger)),
+			fx.As(new(model.Logger)),
 		)),
 		fx.Provide(config.Build),
 		fx.Provide(ProvideSwapiTransport),

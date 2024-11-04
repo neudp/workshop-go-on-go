@@ -3,7 +3,6 @@ package vanila
 import (
 	"fmt"
 	"goOnGo/internal/swapi/config"
-	"goOnGo/internal/swapi/model"
 	"goOnGo/internal/swapi/swapi"
 	"goOnGo/internal/swapi/transport"
 	"goOnGo/internal/swapi/use-case"
@@ -78,7 +77,7 @@ func (app *App) SwapiClient() *swapi.Swapi {
 	return swapi.New(client, app.logger)
 }
 
-func (app *App) GetCharacter(id string) (*model.Character, error) {
+func (app *App) GetCharacter(id string) (*useCase.CharacterDto, error) {
 	idInt, err := strconv.Atoi(id)
 
 	if err != nil {
