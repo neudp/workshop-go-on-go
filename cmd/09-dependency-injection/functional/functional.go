@@ -1,16 +1,18 @@
 package functional
 
 import (
-	"goOnGo/internal/swapi-func/application/logging"
+	getCharacter "goOnGo/internal/swapi-func/application/get-character"
+	loggingApp "goOnGo/internal/swapi-func/application/logging"
 	"goOnGo/internal/swapi-func/infrastructure/environment"
-	filterLog "goOnGo/internal/swapi-func/infrastructure/filter-log"
+	filterLog "goOnGo/internal/swapi-func/infrastructure/logging"
+	"goOnGo/internal/swapi-func/infrastructure/swapi"
 	"goOnGo/internal/swapi-func/infrastructure/transport"
-	writeLog "goOnGo/internal/swapi-func/infrastructure/write-log"
-	"goOnGo/internal/swapi-func/use-case/swapi"
+	"goOnGo/internal/swapi-func/model/logging"
+	"goOnGo/internal/swapi-func/use-case"
 	"strconv"
 )
 
-func GetCharacter(id string) (*swapi.CharacterDto, error) {
+func GetCharacter(id string) (*use_case.CharacterDto, error) {
 	idInt, err := strconv.Atoi(id)
 
 	if err != nil {
@@ -27,13 +29,17 @@ func GetCharacter(id string) (*swapi.CharacterDto, error) {
 		return nil, err
 	}
 
-	logLevel := logging.NewLogLevel(
+	logLevel := loggingApp.NewLogLevel(
 		filterLog.NewFilterLog(cfg.MinLogLevel()),
-		writeLog.NewWriteLog(),
+		filterLog.NewWriteLog(),
 	)
+	logger := logging.NewLogger(logLevel)
+	doRequest := transport.NewDoRequest(cfg.SwapiURL(), logLevel)
+	doGetRequest := swapi.NewDoGetRequest(swapi.DoRequest(doRequest), logger)
+	charactersClient := swapi.NewGetCharacter(doGetRequest, logger)
 
-	return swapi.NewGetCharacter(
-		logLevel,
-		transport.NewDoSwapiRequest(logLevel, cfg.SwapiURL()),
-	)(&swapi.GetCharacterQuery{Id: idInt})
+	return use_case.NewGetCharacter(
+		getCharacter.Find(charactersClient),
+		logger.Info,
+	)(&use_case.GetCharacterQuery{IdValue: idInt})
 }

@@ -1,6 +1,10 @@
-package model
+package character
 
-type Color string
+import (
+	"goOnGo/internal/swapi/model/domain/color"
+	"goOnGo/internal/swapi/model/domain/planet"
+)
+
 type BirthYear string
 type Gender string
 
@@ -8,12 +12,12 @@ type Character struct {
 	name      string
 	height    *int
 	mass      *float64
-	hairColor Color
-	skinColor Color
-	eyeColor  Color
+	hairColor color.Color
+	skinColor color.Color
+	eyeColor  color.Color
 	birthYear BirthYear
 	gender    Gender
-	homeworld *Planet
+	homeworld *planet.Planet
 }
 
 func NewCharacter(
@@ -22,10 +26,10 @@ func NewCharacter(
 	mass *float64,
 	hairColor,
 	skinColor,
-	eyeColor Color,
+	eyeColor color.Color,
 	birthYear BirthYear,
 	gender Gender,
-	homeworld *Planet,
+	homeworld *planet.Planet,
 ) *Character {
 	return &Character{
 		name:      name,
@@ -52,15 +56,15 @@ func (character *Character) Mass() *float64 {
 	return character.mass
 }
 
-func (character *Character) HairColor() Color {
+func (character *Character) HairColor() color.Color {
 	return character.hairColor
 }
 
-func (character *Character) SkinColor() Color {
+func (character *Character) SkinColor() color.Color {
 	return character.skinColor
 }
 
-func (character *Character) EyeColor() Color {
+func (character *Character) EyeColor() color.Color {
 	return character.eyeColor
 }
 
@@ -72,6 +76,6 @@ func (character *Character) Gender() Gender {
 	return character.gender
 }
 
-func (character *Character) Homeworld() *Planet {
+func (character *Character) Homeworld() *planet.Planet {
 	return character.homeworld
 }

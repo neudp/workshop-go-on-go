@@ -1,37 +1,30 @@
 package useCase
 
 import (
-	"goOnGo/internal/swapi/model"
+	"goOnGo/internal/swapi/application/get-character"
+	"goOnGo/internal/swapi/model/logging"
 )
 
 type GetCharacterQuery struct {
-	id int
+	IdValue int `json:"id"`
 }
 
-func NewGetCharacterQuery(id int) *GetCharacterQuery {
-	return &GetCharacterQuery{id: id}
-}
-
-type GetCharacterClient interface {
-	GetCharacter(id int) (*model.Character, error)
+func (query *GetCharacterQuery) Id() int {
+	return query.IdValue
 }
 
 type GetCharacterHandler struct {
-	client GetCharacterClient
-	logger model.Logger
+	getCharacter *getCharacter.Handler
 }
 
-func NewGetCharacterHandler(client GetCharacterClient, logger model.Logger) *GetCharacterHandler {
+func NewGetCharacterHandler(repository getCharacter.Repository, logger logging.Logger) *GetCharacterHandler {
 	return &GetCharacterHandler{
-		client: client,
-		logger: logger,
+		getCharacter: getCharacter.NewHandler(repository, logger),
 	}
 }
 
 func (handler *GetCharacterHandler) Handle(query *GetCharacterQuery) (*CharacterDto, error) {
-	handler.logger.Infof("Get character with id %d", query.id)
-
-	chrctr, err := handler.client.GetCharacter(query.id)
+	chrctr, err := handler.getCharacter.Handle(query)
 
 	if err != nil {
 		return nil, err

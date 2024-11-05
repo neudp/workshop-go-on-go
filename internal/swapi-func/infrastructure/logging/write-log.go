@@ -1,4 +1,4 @@
-package writeLog
+package filterLog
 
 import (
 	"encoding/json"

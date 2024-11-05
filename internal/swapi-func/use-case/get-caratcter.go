@@ -1,21 +1,25 @@
-package swapi
+package use_case
 
 import (
-	"goOnGo/internal/swapi-func/application/swapi"
+	getCharacter "goOnGo/internal/swapi-func/application/get-character"
 	"goOnGo/internal/swapi-func/model/logging"
 )
 
 type GetCharacterQuery struct {
-	Id int `json:"id"`
+	IdValue int `json:"id"`
+}
+
+func (query *GetCharacterQuery) Id() int {
+	return query.IdValue
 }
 
 type GetCharacter = func(query *GetCharacterQuery) (*CharacterDto, error)
 
-func NewGetCharacter(logLevel logging.LogLevel, request swapi.DoRequest) GetCharacter {
-	getSwapiCharacter := swapi.NewGetCharacter(logLevel, request)
+func NewGetCharacter(find getCharacter.Find, logInfo logging.Log) GetCharacter {
+	doGetCharacter := getCharacter.New(find, logInfo)
 
 	return func(query *GetCharacterQuery) (*CharacterDto, error) {
-		chrctr, err := getSwapiCharacter(query.Id)
+		chrctr, err := doGetCharacter(query)
 
 		if err != nil {
 			return nil, err

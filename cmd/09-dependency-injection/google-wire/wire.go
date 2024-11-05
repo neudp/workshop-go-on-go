@@ -4,16 +4,17 @@
 package googleWire
 
 import (
-	"fmt"
 	"github.com/google/wire"
-	"goOnGo/internal/swapi/config"
-	"goOnGo/internal/swapi/model"
-	"goOnGo/internal/swapi/swapi"
-	"goOnGo/internal/swapi/transport"
+	getCharacter "goOnGo/internal/swapi/application/get-character"
+	loggingApp "goOnGo/internal/swapi/application/logging"
+	"goOnGo/internal/swapi/infrastructure/environment"
+	loggingInfra "goOnGo/internal/swapi/infrastructure/logging"
+	"goOnGo/internal/swapi/infrastructure/swapi"
+	"goOnGo/internal/swapi/infrastructure/transport"
+	"goOnGo/internal/swapi/model/config"
+	"goOnGo/internal/swapi/model/logging"
 	"goOnGo/internal/swapi/use-case"
 	"strconv"
-	"strings"
-	"time"
 )
 
 /*
@@ -29,78 +30,50 @@ Wire генерирует провайдеры для ваших структу�
 - Wire несколько усложняет фабричные методы требуя их вычленения в отдельные типы
 */
 
-type Logger struct{}
-
-func NewLogger() *Logger {
-	return &Logger{}
+func ProvideHttpClient(cfg *config.Config, logger logging.Logger) swapi.Doer {
+	return transport.NewHttpClient(cfg.SwapiURL(), logger)
 }
 
-func (l *Logger) Infof(format string, args ...interface{}) {
-	if !strings.HasSuffix(format, "\n") {
-		format += "\n"
-	}
-
-	fmt.Printf(time.Now().Format("2006-01-02 15-04-05.000")+" INFO: "+format, args...)
+func ProvideConfig(env *environment.Environment) (*config.Config, error) {
+	return env.ToConfig()
 }
 
-func (l *Logger) Errorf(format string, args ...interface{}) {
-	if !strings.HasSuffix(format, "\n") {
-		format += "\n"
-	}
-
-	fmt.Printf(time.Now().Format("2006-01-02 15-04-05.000")+" ERROR: "+format, args...)
+func ProvideLoggingFilter(cfg *config.Config) loggingApp.Filter {
+	return loggingInfra.NewFilter(cfg.MinLoglevel())
 }
-
-type SwapiTransportProvider func() swapi.Transport                   // фабричный метод
-type SwapiClientProvider func() *swapi.Swapi                         // фабричный метод
-type GetCharacterHandlerProvider func() *useCase.GetCharacterHandler // фабричный метод
 
 type App struct {
-	characterHandler GetCharacterHandlerProvider
+	Handler *useCase.GetCharacterHandler
 }
 
-func newApp(characterHandler GetCharacterHandlerProvider) *App {
-	return &App{
-		characterHandler: characterHandler,
-	}
+func newApp(handler *useCase.GetCharacterHandler) *App {
+	return &App{Handler: handler}
 }
 
-func (app *App) GetCharacter(id string) (*useCase.CharacterDto, error) {
+func (app *App) Handle(id string) (*useCase.CharacterDto, error) {
 	idInt, err := strconv.Atoi(id)
-
 	if err != nil {
 		return nil, err
 	}
 
-	return app.characterHandler().Handle(useCase.NewGetCharacterQuery(idInt))
-}
-
-func ProvideSwapiTransport(cfg *config.Config, logger model.Logger) SwapiTransportProvider {
-	return func() swapi.Transport {
-		return transport.NewSwapiClient(cfg, logger)
-	}
-}
-
-func ProvideSwapiClient(transport SwapiTransportProvider, logger model.Logger) SwapiClientProvider {
-	return func() *swapi.Swapi {
-		return swapi.New(transport(), logger)
-	}
-}
-
-func ProvideCharacterHandler(client SwapiClientProvider, logger *Logger) GetCharacterHandlerProvider {
-	return func() *useCase.GetCharacterHandler {
-		return useCase.NewGetCharacterHandler(client(), logger)
-	}
+	return app.Handler.Handle(&useCase.GetCharacterQuery{IdValue: idInt})
 }
 
 func NewApp() (*App, error) {
 	panic(wire.Build(
 		newApp,
-		config.Build,
-		NewLogger,
-		wire.Bind(new(model.Logger), new(*Logger)),
-		ProvideSwapiTransport,
-		ProvideSwapiClient,
-		ProvideCharacterHandler,
+		useCase.NewGetCharacterHandler, // наш use-case
+		swapi.NewCharactersClient,      // реализация репозитория
+		wire.Bind(new(getCharacter.Repository), new(*swapi.CharactersClient)), // связываем интерфейс и реализацию
+		swapi.NewClient,        // исполнитель запросов для swapi клиента
+		ProvideHttpClient,      // <- провайдер исполнителя HTTP запросов, поскольку конструктор требует строчный аргумент
+		ProvideConfig,          // <- провайдер конфига поскольку конфиг строится из окружения
+		environment.Read,       // Окружение
+		swapi.NewPlanetsClient, // реализация клиента планет
+		loggingApp.NewLogger,   // логгер
+		wire.Bind(new(logging.Logger), new(*loggingApp.Logger)), // связываем логгер с его реализацией
+		ProvideLoggingFilter,   // <- провайдер фильтра для логгера, поскольку конструктор требует скалярный аргумент
+		loggingInfra.NewWriter, // реализация врайтера для логгера
+		wire.Bind(new(loggingApp.Writer), new(*loggingInfra.Writer)), // связываем врайтер с его реализацией
 	))
 }

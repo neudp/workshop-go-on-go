@@ -1,4 +1,4 @@
-package model
+package planet
 
 type Climate string
 type Gravity string

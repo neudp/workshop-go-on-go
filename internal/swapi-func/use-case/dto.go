@@ -1,4 +1,4 @@
-package swapi
+package use_case
 
 type CharacterDto struct {
 	Name      string   `json:"name"`

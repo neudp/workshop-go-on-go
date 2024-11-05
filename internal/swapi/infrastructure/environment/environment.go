@@ -3,8 +3,8 @@ package environment
 import (
 	"errors"
 	"goOnGo/internal/environment"
-	"goOnGo/internal/swapi-func/model/config"
-	"goOnGo/internal/swapi-func/model/logging"
+	"goOnGo/internal/swapi/model/config"
+	"goOnGo/internal/swapi/model/logging"
 )
 
 var ErrInvalidLogLevelValue = errors.New("invalid log level value")

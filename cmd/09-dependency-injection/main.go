@@ -2,12 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"goOnGo/cmd/09-dependency-injection/functional"
 	googleWire "goOnGo/cmd/09-dependency-injection/google-wire"
 	uberFx "goOnGo/cmd/09-dependency-injection/uber-fx"
 	"goOnGo/cmd/09-dependency-injection/vanila"
-	useCase "goOnGo/internal/swapi/use-case"
 	"os"
 )
 
@@ -27,81 +25,67 @@ Dependency injection - это процесс предоставления зав
   но с некоторыми ограничениями
 - Uber FX - библиотека от Uber, так же основанная на рефлексии, но работающая
   с функциями вместо структур
+- Функциональный метод (тот же ванильный метод, но с использованием функционального стиля)
 */
 
-type GetCharacterApp interface {
-	GetCharacter(id string) (*useCase.CharacterDto, error)
-}
-
-func GetCharacterCommand(app GetCharacterApp) error {
-	character, err := app.GetCharacter(os.Args[2])
-
-	if err != nil {
-		return err
-	}
-
-	if character == nil {
-		return errors.New("character not found")
-	}
-
-	encoder := json.NewEncoder(os.Stdout)
-	encoder.SetIndent("", "  ")
-
-	if err = encoder.Encode(character); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func main() {
+	var result any
+	var err error
+
 	switch os.Args[1] {
 	case "vanila":
-		app, err := vanila.NewApp(true)
+		var app *vanila.App
+		app, err = vanila.NewApp()
 
 		if err != nil {
 			panic(err)
 		}
 
-		if err := GetCharacterCommand(app); err != nil {
+		result, err = app.Hadle(os.Args[2])
+		if err != nil {
 			panic(err)
 		}
 	case "wire":
-		app, err := googleWire.NewApp()
+		var app *googleWire.App
+		app, err = googleWire.NewApp()
 
 		if err != nil {
 			panic(err)
 		}
 
-		if err := GetCharacterCommand(app); err != nil {
+		result, err = app.Handle(os.Args[2])
+		if err != nil {
 			panic(err)
 		}
 	case "fx":
-		err := uberFx.Run(func(app *uberFx.App) error {
-			return GetCharacterCommand(app)
+		err = uberFx.Do(func(app *uberFx.App) error {
+			var err error
+			result, err = app.Handle(os.Args[2])
+
+			return err
 		})
 
 		if err != nil {
 			panic(err)
 		}
 	case "func":
-		character, err := functional.GetCharacter(os.Args[2])
+		result, err = functional.GetCharacter(os.Args[2])
 
 		if err != nil {
 			panic(err)
 		}
-
-		if character == nil {
-			panic("character not found")
-		}
-
-		encoder := json.NewEncoder(os.Stdout)
-		encoder.SetIndent("", "  ")
-
-		if err = encoder.Encode(character); err != nil {
-			panic(err)
-		}
 	default:
 		println("Invalid argument")
+	}
+
+	if result == nil {
+		panic("character not found")
+	}
+
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+
+	if err := encoder.Encode(result); err != nil {
+		panic(err)
 	}
 }

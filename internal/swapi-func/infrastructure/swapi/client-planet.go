@@ -77,110 +77,106 @@ func newToPlanet(logError logging.Log) toPlanet {
 	}
 }
 
-func newGetPlanet(log logging.LogLevel, getResponse doGet) getPlanet {
-	logError := logging.NewLog(log, logging.Error)
-	logInfo := logging.NewLog(log, logging.Info)
-	convertToPlanet := newToPlanet(logError)
+func newGetPlanet(doGetRequest DoGetRequest, logger *logging.Logger) getPlanet {
+	convertToPlanet := newToPlanet(logger.Error)
 
 	return func(url string) (*planet.Planet, error) {
-		response, err := getResponse(url)
+		response, err := doGetRequest(url)
 		if err != nil {
-			logError(fmt.Sprintf("error getting planet (%s): %v", url, err))
+			logger.Error(fmt.Sprintf("error getting planet (%s): %v", url, err))
 
 			return nil, err
 		}
 
-		logInfo("getPlanet response done")
+		logger.Info("getPlanet response done")
 
 		defer func() {
 			err = errors.Join(err, response.Body.Close())
 		}()
 
 		if response.StatusCode != http.StatusOK {
-			logError(fmt.Sprintf("error getting planet (%s): %s", url, response.Status))
+			logger.Error(fmt.Sprintf("error getting planet (%s): %s", url, response.Status))
 
 			return nil, err
 		}
 
-		logInfo("getPlanet response status OK")
+		logger.Info("getPlanet response status OK")
 
 		dto := new(planetDto)
 		if err = json.NewDecoder(response.Body).Decode(dto); err != nil {
-			logError(fmt.Sprintf("error decode planet (%s): %v", url, err))
+			logger.Error(fmt.Sprintf("error decode planet (%s): %v", url, err))
 
 			return nil, err
 		}
 
-		logInfo("getPlanet decode done")
+		logger.Info("getPlanet decode done")
 
 		plnt, err := convertToPlanet(dto)
 
 		if err != nil {
-			logError(fmt.Sprintf("error toPlanet (%s): %v", url, err))
+			logger.Error(fmt.Sprintf("error toPlanet (%s): %v", url, err))
 
 			return nil, err
 		}
 
-		logInfo("getPlanet toPlanet done")
+		logger.Info("getPlanet toPlanet done")
 
 		return plnt, nil
 	}
 }
 
-func newGetPlanets(log logging.LogLevel, getResponse doGet) getPlanets {
-	logError := logging.NewLog(log, logging.Error)
-	logInfo := logging.NewLog(log, logging.Info)
-	convertToPlanet := newToPlanet(logError)
+func newGetPlanets(doGetRequest DoGetRequest, logger *logging.Logger) getPlanets {
+	convertToPlanet := newToPlanet(logger.Error)
 
 	return func(url string) ([]*planet.Planet, error) {
 		planets := make([]*planet.Planet, 0)
 
 		var next = &url
 		for next != nil {
-			response, err := getResponse(*next)
+			response, err := doGetRequest(*next)
 			if err != nil {
-				logError(fmt.Sprintf("error getting planets (%s): %v", *next, err))
+				logger.Error(fmt.Sprintf("error getting planets (%s): %v", *next, err))
 
 				return nil, err
 			}
 
-			logInfo("getPlanets response done")
+			logger.Info("getPlanets response done")
 
 			if response.StatusCode != http.StatusOK {
-				logError(fmt.Sprintf("error getting planets (%s): %s", *next, response.Status))
+				logger.Error(fmt.Sprintf("error getting planets (%s): %s", *next, response.Status))
 
 				return nil, err
 			}
 
-			logInfo("getPlanets response status OK")
+			logger.Info("getPlanets response status OK")
 
 			dto := new(planetsDto)
 
 			if err = json.NewDecoder(response.Body).Decode(dto); err != nil {
-				logError(fmt.Sprintf("error decode planets (%s): %v", *next, err))
+				logger.Error(fmt.Sprintf("error decode planets (%s): %v", *next, err))
 
 				return nil, err
 			}
 
-			logInfo("getPlanets decode done")
+			logger.Info("getPlanets decode done")
 
 			for index, item := range dto.Results {
 				var plnt *planet.Planet
 				plnt, err = convertToPlanet(&item)
 
 				if err != nil {
-					logError(fmt.Sprintf("error toPlanet (%s)[%d]: %v", *next, index, err))
+					logger.Error(fmt.Sprintf("error toPlanet (%s)[%d]: %v", *next, index, err))
 
 					return nil, err
 				}
 
-				logInfo("getPlanets toPlanet done")
+				logger.Info("getPlanets toPlanet done")
 
 				planets = append(planets, plnt)
 			}
 
 			if err = response.Body.Close(); err != nil {
-				logError(fmt.Sprintf("error close planets (%s): %v", *next, err))
+				logger.Error(fmt.Sprintf("error close planets (%s): %v", *next, err))
 
 				return nil, err
 			}

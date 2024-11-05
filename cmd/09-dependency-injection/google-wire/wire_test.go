@@ -1,9 +1,11 @@
-package functional
+package googleWire
 
 import (
 	"os"
 	"testing"
 )
+
+const KB = 1 << 10
 
 func BenchmarkGetCharacter(b *testing.B) {
 	b.ReportAllocs()
@@ -11,7 +13,12 @@ func BenchmarkGetCharacter(b *testing.B) {
 	_ = os.Setenv("MIN_LOG_LEVEL", "ERROR")
 
 	for i := 0; i < b.N; i++ {
-		if _, err := GetCharacter("1"); err != nil {
+		app, err := NewApp()
+		if err != nil {
+			b.Error(err)
+		}
+
+		if _, err = app.Handle("1"); err != nil {
 			b.Error(err)
 		}
 	}
@@ -24,7 +31,12 @@ func BenchmarkGetCharacterParallel(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			if _, err := GetCharacter("1"); err != nil {
+			app, err := NewApp()
+			if err != nil {
+				b.Error(err)
+			}
+
+			if _, err = app.Handle("1"); err != nil {
 				b.Error(err)
 			}
 		}
