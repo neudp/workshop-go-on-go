@@ -7,10 +7,10 @@ import (
 	"goOnGo/internal/swapi-func/model/logging"
 )
 
-type GetPlanets = func() ([]*planet.Planet, error)
-type GetPlanet = func(id int) (*planet.Planet, error)
-type GetCharacter = func(id int) (*character.Character, error)
-type GetPeople = func() ([]*character.Character, error)
+type GetPlanets func() ([]*planet.Planet, error)
+type GetPlanet func(id int) (*planet.Planet, error)
+type GetCharacter func(id int) (*character.Character, error)
+type GetPeople func() ([]*character.Character, error)
 
 func NewGetPlanets(logLevel logging.LogLevel, doRequest DoRequest) GetPlanets {
 	logError := logging.NewLog(logLevel, logging.Error)

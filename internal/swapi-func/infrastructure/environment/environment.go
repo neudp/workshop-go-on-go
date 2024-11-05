@@ -3,6 +3,7 @@ package environment
 import (
 	"errors"
 	"goOnGo/internal/environment"
+	"goOnGo/internal/swapi-func/model/config"
 	"goOnGo/internal/swapi-func/model/logging"
 )
 
@@ -27,17 +28,23 @@ func Read() (*Environment, error) {
 	return &Environment{values: env}, nil
 }
 
-func (env *Environment) SwapiURL() string {
-	return env.values.SwapiURL
+func (env *Environment) ToConfig() (*config.Config, error) {
+	minLogLevel, err := parseLogLevel(env.values.MinLogLevel)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return config.New(env.values.SwapiURL, minLogLevel), nil
 }
 
-func (env *Environment) MinLogLevel() (logging.Level, error) {
-	switch env.values.MinLogLevel {
+func parseLogLevel(level string) (logging.Level, error) {
+	switch level {
 	case "INFO":
 		return logging.Info, nil
 	case "ERROR":
 		return logging.Error, nil
 	default:
-		return -1, ErrInvalidLogLevelValue
+		return logging.Info, ErrInvalidLogLevelValue
 	}
 }

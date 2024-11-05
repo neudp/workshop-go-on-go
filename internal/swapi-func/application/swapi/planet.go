@@ -10,9 +10,9 @@ import (
 	"strings"
 )
 
-type getPlanet = func(url string) (*planet.Planet, error)
-type toPlanet = func(dto *planetDto) (*planet.Planet, error)
-type getPlanets = func(url string) ([]*planet.Planet, error)
+type getPlanet func(url string) (*planet.Planet, error)
+type toPlanet func(dto *planetDto) (*planet.Planet, error)
+type getPlanets func(url string) ([]*planet.Planet, error)
 
 func newToPlanet(logError logging.Log) toPlanet {
 	return func(dto *planetDto) (*planet.Planet, error) {

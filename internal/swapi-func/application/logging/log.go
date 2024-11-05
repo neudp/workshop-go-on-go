@@ -30,8 +30,8 @@ func Log(
 
 // Выделим типы
 
-type FilterLog = func(record *logging.Record) bool
-type WriteLog = func(record *logging.Record)
+type FilterLog func(record *logging.Record) bool
+type WriteLog func(record *logging.Record)
 
 // Мы разделелили функцию Log на две функции: Параметризованную и Непараметризованную.
 

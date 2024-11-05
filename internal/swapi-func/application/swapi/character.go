@@ -10,9 +10,9 @@ import (
 	"net/http"
 )
 
-type toCharacter = func(dto *characterDto) (*character.Character, error)
-type getCharacter = func(url string) (*character.Character, error)
-type getPeople = func(url string) ([]*character.Character, error)
+type toCharacter func(dto *characterDto) (*character.Character, error)
+type getCharacter func(url string) (*character.Character, error)
+type getPeople func(url string) ([]*character.Character, error)
 
 func newToCharacter(logError logging.Log, doGetPlanet getPlanet) toCharacter {
 	return func(dto *characterDto) (*character.Character, error) {

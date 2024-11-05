@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-type doGet = func(url string) (*http.Response, error)
-type DoRequest = func(request *http.Request) (*http.Response, error)
+type doGet func(url string) (*http.Response, error)
+type DoRequest func(request *http.Request) (*http.Response, error)
 
 func newGet(logError logging.Log, doRequest DoRequest) doGet {
 	return func(url string) (*http.Response, error) {
