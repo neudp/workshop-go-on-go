@@ -12,15 +12,15 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 - [X] Command line application
 - [X] Environment variables
 - [X] HTTP client  (check for best practices, FastHTTP)
+- [X] Websockets (github.com/coder/websocket, gorilla/websocket)
 - [X] HTTP server
 - [X] Serialization
 - [X] Handling HTTP requests
 - [X] Dependency injection (vanilla deep) <-
 - [X] Testing
 - [X] Handling errors
-- [ ] sql package
+- [ ] sql package (https://github.com/golang-migrate/migrate for migrations)
 - [ ] ORM
-- [ ] Websockets
 - [ ] gRPC server and protobuf
 - [ ] Concurrency
 - [ ] Memory management
@@ -37,10 +37,10 @@ docker compose up -d --build
 
 ## Run examples (Go)
 ```bash
-go run ./cmd/01-hello-world
+go run ./cobra/01-hello-world
 ```
 
 ## Run examples (Docker)
 ```bash
-./run.sh go run ./cmd/01-hello-world
+./run.sh go run ./cobra/01-hello-world
 ```

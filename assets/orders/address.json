@@ -1,0 +1,14 @@
+{
+  "street": "1234 Main St",
+  "postal_code": "12345",
+  "address_line": "apt 123",
+  "country": {
+    "name": "United States"
+  },
+  "city": {
+      "name": "New York"
+  },
+  "province": {
+    "name": "New York"
+  }
+}

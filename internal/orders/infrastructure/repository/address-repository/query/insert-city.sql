@@ -1,0 +1,1 @@
+INSERT INTO cities (name, country_id, province_id) VALUES (?, ?, ?);

@@ -1,0 +1,1 @@
+INSERT INTO provinces (name, country_id) VALUES (?, ?);
