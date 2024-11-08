@@ -2,6 +2,9 @@ package main
 
 import (
 	"github.com/spf13/cobra"
+	vanillaFunc "goOnGo/internal/swapi-func/use-case/cobra/vanilla"
+	googleWire "goOnGo/internal/swapi/use-case/cobra/google-wire"
+	uberFx "goOnGo/internal/swapi/use-case/cobra/uber-fx"
 	"goOnGo/internal/swapi/use-case/cobra/vanilla"
 	"io"
 	"os"
@@ -18,7 +21,7 @@ func BenchmarkGetCharacterGoogleWire(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		cmd := new(cobra.Command)
-		*cmd = *vanilla.Cmd()
+		*cmd = *googleWire.Cmd()
 		cmd.SetOut(io.Discard)
 		cmd.SetArgs([]string{"1"})
 
@@ -34,7 +37,7 @@ func BenchmarkGetCharacterGoogleWireParallel(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			cmd := new(cobra.Command)
-			*cmd = *vanilla.Cmd()
+			*cmd = *googleWire.Cmd()
 			cmd.SetOut(io.Discard)
 			cmd.SetArgs([]string{"1"})
 
@@ -50,7 +53,7 @@ func BenchmarkGetCharacterUberFx(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		cmd := new(cobra.Command)
-		*cmd = *vanilla.Cmd()
+		*cmd = *uberFx.Cmd()
 		cmd.SetOut(io.Discard)
 		cmd.SetArgs([]string{"1"})
 
@@ -66,7 +69,7 @@ func BenchmarkGetCharacterUberFxParallel(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			cmd := new(cobra.Command)
-			*cmd = *vanilla.Cmd()
+			*cmd = *uberFx.Cmd()
 			cmd.SetOut(io.Discard)
 			cmd.SetArgs([]string{"1"})
 
@@ -114,7 +117,7 @@ func BenchmarkGetCharacterVanillaFunc(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		cmd := new(cobra.Command)
-		*cmd = *vanilla.Cmd()
+		*cmd = *vanillaFunc.Cmd()
 		cmd.SetOut(io.Discard)
 		cmd.SetArgs([]string{"1"})
 
@@ -130,7 +133,7 @@ func BenchmarkGetCharacterVanillaFuncParallel(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			cmd := new(cobra.Command)
-			*cmd = *vanilla.Cmd()
+			*cmd = *vanillaFunc.Cmd()
 			cmd.SetOut(io.Discard)
 			cmd.SetArgs([]string{"1"})
 

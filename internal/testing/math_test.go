@@ -160,6 +160,8 @@ func TestMath(t *testing.T) {
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) { // t.Run позволяет группировать тесты
+				t.Parallel()
+
 				actual := Add(tt.numbers...)
 				if actual != tt.expected {
 					t.Errorf("expected %v, got %v", tt.expected, actual)

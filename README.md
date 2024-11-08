@@ -23,6 +23,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 - [ ] ORM
 - [ ] gRPC server and protobuf
 - [ ] Concurrency
+- [ ] Concurrency patterns (worker group, circuit breaker, rate limiter, ...)
 - [ ] Memory management
 - [ ] go work
 
