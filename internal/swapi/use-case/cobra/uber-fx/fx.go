@@ -10,8 +10,6 @@ import (
 	"goOnGo/internal/swapi/infrastructure/transport"
 	"goOnGo/internal/swapi/model/config"
 	"goOnGo/internal/swapi/model/logging"
-	"goOnGo/internal/swapi/use-case"
-	"strconv"
 )
 
 /*
@@ -33,27 +31,9 @@ func ProvideLoggingFilter(cfg *config.Config) loggingApp.Filter {
 	return loggingInfra.NewFilter(cfg.MinLoglevel())
 }
 
-type App struct {
-	Handler *useCase.GetCharacterHandler
-}
-
-func newApp(handler *useCase.GetCharacterHandler) *App {
-	return &App{Handler: handler}
-}
-
-func (app *App) Handle(id string) (*useCase.CharacterDto, error) {
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return app.Handler.Handle(&useCase.GetCharacterQuery{IdValue: idInt})
-}
-
-func Do(do func(app *App) error) error {
+func Do(do func(app *getCharacter.Handler) error) error {
 	app := fx.New(
-		fx.Provide(newApp),
-		fx.Provide(useCase.NewGetCharacterHandler),
+		fx.Provide(getCharacter.NewHandler),
 		fx.Provide(fx.Annotate(
 			swapi.NewCharactersClient,
 			fx.As(new(getCharacter.Repository)),

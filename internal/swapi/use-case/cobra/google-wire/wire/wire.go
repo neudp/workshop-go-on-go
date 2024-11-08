@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package googleWire
+package wire
 
 import (
 	"github.com/google/wire"
@@ -13,8 +13,6 @@ import (
 	"goOnGo/internal/swapi/infrastructure/transport"
 	"goOnGo/internal/swapi/model/config"
 	"goOnGo/internal/swapi/model/logging"
-	"goOnGo/internal/swapi/use-case"
-	"strconv"
 )
 
 /*
@@ -42,28 +40,10 @@ func ProvideLoggingFilter(cfg *config.Config) loggingApp.Filter {
 	return loggingInfra.NewFilter(cfg.MinLoglevel())
 }
 
-type App struct {
-	Handler *useCase.GetCharacterHandler
-}
-
-func newApp(handler *useCase.GetCharacterHandler) *App {
-	return &App{Handler: handler}
-}
-
-func (app *App) Handle(id string) (*useCase.CharacterDto, error) {
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return app.Handler.Handle(&useCase.GetCharacterQuery{IdValue: idInt})
-}
-
-func NewApp() (*App, error) {
+func NewGetCharacterHandler() (*getCharacter.Handler, error) {
 	panic(wire.Build(
-		newApp,
-		useCase.NewGetCharacterHandler, // наш use-case
-		swapi.NewCharactersClient,      // реализация репозитория
+		getCharacter.NewHandler,   // реализация хендлера
+		swapi.NewCharactersClient, // реализация репозитория
 		wire.Bind(new(getCharacter.Repository), new(*swapi.CharactersClient)), // связываем интерфейс и реализацию
 		swapi.NewClient,        // исполнитель запросов для swapi клиента
 		ProvideHttpClient,      // <- провайдер исполнителя HTTP запросов, поскольку конструктор требует строчный аргумент

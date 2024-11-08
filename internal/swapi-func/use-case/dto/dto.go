@@ -1,4 +1,4 @@
-package use_case
+package dto
 
 type CharacterDto struct {
 	Name      string   `json:"name"`

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"goOnGo/cmd/09-dependency-injection/functional"
-	googleWire "goOnGo/cmd/09-dependency-injection/google-wire"
-	uberFx "goOnGo/cmd/09-dependency-injection/uber-fx"
-	"goOnGo/cmd/09-dependency-injection/vanila"
-	"os"
+	"github.com/spf13/cobra"
+	vanillaFunc "goOnGo/internal/swapi-func/use-case/cobra/vanilla"
+	googleWire "goOnGo/internal/swapi/use-case/cobra/google-wire"
+	uberFx "goOnGo/internal/swapi/use-case/cobra/uber-fx"
+	"goOnGo/internal/swapi/use-case/cobra/vanilla"
 )
 
 /*
@@ -29,63 +28,19 @@ Dependency injection - это процесс предоставления зав
 */
 
 func main() {
-	var result any
-	var err error
-
-	switch os.Args[1] {
-	case "vanila":
-		var app *vanila.App
-		app, err = vanila.NewApp()
-
-		if err != nil {
-			panic(err)
-		}
-
-		result, err = app.Hadle(os.Args[2])
-		if err != nil {
-			panic(err)
-		}
-	case "wire":
-		var app *googleWire.App
-		app, err = googleWire.NewApp()
-
-		if err != nil {
-			panic(err)
-		}
-
-		result, err = app.Handle(os.Args[2])
-		if err != nil {
-			panic(err)
-		}
-	case "fx":
-		err = uberFx.Do(func(app *uberFx.App) error {
-			var err error
-			result, err = app.Handle(os.Args[2])
-
-			return err
-		})
-
-		if err != nil {
-			panic(err)
-		}
-	case "func":
-		result, err = functional.GetCharacter(os.Args[2])
-
-		if err != nil {
-			panic(err)
-		}
-	default:
-		println("Invalid argument")
+	rootCmd := &cobra.Command{
+		Use:   "dependency-injection",
+		Short: "Dependency injection examples",
 	}
 
-	if result == nil {
-		panic("character not found")
-	}
+	rootCmd.AddCommand(
+		googleWire.Cmd(),
+		uberFx.Cmd(),
+		vanilla.Cmd(),
+		vanillaFunc.Cmd(),
+	)
 
-	encoder := json.NewEncoder(os.Stdout)
-	encoder.SetIndent("", "  ")
-
-	if err := encoder.Encode(result); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		panic(err)
 	}
 }
