@@ -19,11 +19,12 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 - [X] Dependency injection (vanilla deep) <-
 - [X] Testing
 - [X] Handling errors
+- [X] Concurrency
+- [ ] Concurrency patterns (fan-in, fan-out, ...)
+- [ ] Distributed System patterns (circuit breaker, rate limiter, ...)
 - [ ] sql package (https://github.com/golang-migrate/migrate for migrations)
 - [ ] ORM
 - [ ] gRPC server and protobuf
-- [ ] Concurrency
-- [ ] Concurrency patterns (worker group, circuit breaker, rate limiter, ...)
 - [ ] Memory management
 - [ ] go work
 
