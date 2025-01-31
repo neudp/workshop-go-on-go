@@ -21,6 +21,8 @@ func Pipeline(name string, cond *sync.Cond, wg *sync.WaitGroup) {
 
 	// sync short time part
 	cond.L.Lock()
+	<-time.After(time.Millisecond * 100) // Do some short work
+	fmt.Printf("%s end phase 1.5\n", name)
 	wg.Done()
 	cond.Wait() // Wait until all goroutines are done with phase 1
 	cond.L.Unlock()
@@ -32,7 +34,7 @@ func Pipeline(name string, cond *sync.Cond, wg *sync.WaitGroup) {
 }
 
 func CondShowCase(_ context.Context) {
-	workers := 1000
+	workers := 10
 	start := time.Now()
 	cond := sync.NewCond(&sync.Mutex{})
 

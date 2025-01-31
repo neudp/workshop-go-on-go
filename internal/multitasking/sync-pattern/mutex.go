@@ -28,6 +28,7 @@ func (sharedResource *SharedResource) Increment() {
 
 func NoMutexShowcase(_ context.Context) {
 	sharedResource := NewSharedResource()
+
 	wg := sync.WaitGroup{}
 	for i := 0; i < 1000; i++ {
 		wg.Add(1)

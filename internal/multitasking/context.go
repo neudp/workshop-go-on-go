@@ -34,6 +34,8 @@ func DoWithContext(ctx context.Context, name string) {
 func ParentContextShowcase(ctx context.Context) {
 	subCtx1, cancel1 := context.WithCancel(ctx)
 	subCtx2, cancel2 := context.WithCancel(ctx)
+	//subCtx3, cancel3 := context.WithTimeout(ctx, 10*time.Second)
+	//subCtx4, cancel4 := context.WithDeadline(ctx, time.Now().Add(10*time.Second))
 
 	fmt.Println("Child contexts")
 	fmt.Println("start routines")
