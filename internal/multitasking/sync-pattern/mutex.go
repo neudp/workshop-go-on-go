@@ -1,6 +1,7 @@
 package syncPattern
 
 import (
+	"context"
 	"fmt"
 	"sync"
 )
@@ -25,7 +26,7 @@ func (sharedResource *SharedResource) Increment() {
 	sharedResource.incrementUnsafe()
 }
 
-func NoMutexShowcase() {
+func NoMutexShowcase(_ context.Context) {
 	sharedResource := NewSharedResource()
 	wg := sync.WaitGroup{}
 	for i := 0; i < 1000; i++ {
@@ -43,7 +44,7 @@ func NoMutexShowcase() {
 	fmt.Println(sharedResource.value)
 }
 
-func WithMutexShowcase() {
+func WithMutexShowcase(_ context.Context) {
 	sharedResource := NewSharedResource()
 
 	wg := sync.WaitGroup{}

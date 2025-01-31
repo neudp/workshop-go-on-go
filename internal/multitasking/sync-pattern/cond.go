@@ -1,6 +1,7 @@
 package syncPattern
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -30,7 +31,7 @@ func Pipeline(name string, cond *sync.Cond, wg *sync.WaitGroup) {
 	fmt.Printf("%s end phase 2\n", name)
 }
 
-func CondShowCase() {
+func CondShowCase(_ context.Context) {
 	workers := 1000
 	start := time.Now()
 	cond := sync.NewCond(&sync.Mutex{})

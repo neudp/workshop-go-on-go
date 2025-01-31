@@ -31,10 +31,9 @@ func DoWithContext(ctx context.Context, name string) {
 	}
 }
 
-func ParentContextShowcase() {
-	mainCtx, cancel := context.WithCancel(context.Background())
-	subCtx1, cancel1 := context.WithCancel(mainCtx)
-	subCtx2, cancel2 := context.WithCancel(mainCtx)
+func ParentContextShowcase(ctx context.Context) {
+	subCtx1, cancel1 := context.WithCancel(ctx)
+	subCtx2, cancel2 := context.WithCancel(ctx)
 
 	fmt.Println("Child contexts")
 	fmt.Println("start routines")
@@ -53,12 +52,11 @@ func ParentContextShowcase() {
 	fmt.Println("Parent context")
 	fmt.Println("start routines")
 
-	subCtx1, _ = context.WithTimeout(mainCtx, 10*time.Second)
-	subCtx2, _ = context.WithTimeout(mainCtx, 10*time.Second)
+	subCtx1, _ = context.WithTimeout(ctx, 10*time.Second)
+	subCtx2, _ = context.WithTimeout(ctx, 10*time.Second)
 
 	go DoWithContext(subCtx1, "routine 1")
 	go DoWithContext(subCtx2, "routine 2")
 
 	fmt.Println("Stop all routines")
-	cancel() // stop all routines
 }

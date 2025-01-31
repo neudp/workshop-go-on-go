@@ -1,6 +1,7 @@
 package multitasking
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -17,7 +18,7 @@ func IntGenerator(start, end int) <-chan int {
 	return ch
 }
 
-func GeneratorShowcase() {
+func GeneratorShowcase(_ context.Context) {
 	gen := IntGenerator(1, 10)
 	for num := range gen {
 		fmt.Printf("Generated number: %d\n", num)

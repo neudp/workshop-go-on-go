@@ -115,10 +115,10 @@ func LeastConnections(ctx context.Context, concurrency int, tasks <-chan func(in
 	}()
 }
 
-func RoundRobinShowcase() {
+func RoundRobinShowcase(ctx context.Context) {
 	count := 1000
 	tasks := make(chan func(int), 10)
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	doerLoad := make(map[int]int)
 	doerTime := make(map[int]time.Duration)
 	taskStart := make(map[int]time.Time)
@@ -166,10 +166,10 @@ func RoundRobinShowcase() {
 	fmt.Printf("Task wait variance: %v\n", math.Pow(squareSum/float64(count), 0.5))
 }
 
-func LeastConnectionsShowcase() {
+func LeastConnectionsShowcase(ctx context.Context) {
 	count := 1000
 	tasks := make(chan func(int), 10)
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	doerLoad := make(map[int]int)
 	doerTime := make(map[int]time.Duration)
 	taskStart := make(map[int]time.Time)

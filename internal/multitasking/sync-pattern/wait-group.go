@@ -1,19 +1,25 @@
 package syncPattern
 
 import (
+	"context"
 	"fmt"
 	"sync"
 )
 
-func NoWaitGroupShowcase() {
+func NoWaitGroupShowcase(ctx context.Context) {
 	for i := 0; i < 10; i++ {
 		go func() {
-			fmt.Printf("Hello from worker %d\n", i)
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				fmt.Printf("Hello from worker %d\n", i)
+			}
 		}()
 	}
 }
 
-func WithWaitGroupShowcase() {
+func WithWaitGroupShowcase(ctx context.Context) {
 	var wg sync.WaitGroup
 
 	for i := 0; i < 10; i++ {
@@ -21,7 +27,13 @@ func WithWaitGroupShowcase() {
 
 		go func() {
 			defer wg.Done()
-			fmt.Printf("Hello from worker %d\n", i)
+
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				fmt.Printf("Hello from worker %d\n", i)
+			}
 		}()
 	}
 

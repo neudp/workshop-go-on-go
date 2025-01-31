@@ -1,11 +1,12 @@
 package syncPattern
 
 import (
+	"context"
 	"fmt"
 	"sync"
 )
 
-func OnceFuncShowCase() {
+func OnceFuncShowCase(_ context.Context) {
 	doOnce := sync.OnceFunc(func() {
 		println("Only once")
 	})
@@ -22,7 +23,7 @@ func OnceFuncShowCase() {
 	wg.Wait()
 }
 
-func OnceValueShowCase() {
+func OnceValueShowCase(_ context.Context) {
 	//getOnce := sync.OnceValues(func() (int, error) {
 	getOnce := sync.OnceValue(func() int {
 		fmt.Println("Only once")

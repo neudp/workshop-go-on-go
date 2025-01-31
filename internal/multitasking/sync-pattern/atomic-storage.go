@@ -2,11 +2,12 @@ package syncPattern
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"sync"
 )
 
-func PoolShowcase() {
+func PoolShowcase(_ context.Context) {
 	kilobytePool := sync.Pool{
 		New: func() interface{} {
 			return bytes.NewBuffer(make([]byte, 0, 1024))
@@ -21,7 +22,7 @@ func PoolShowcase() {
 	kilobytePool.Put(kilobyte) // return buffer to pool
 }
 
-func AtomicMapShowcase() {
+func AtomicMapShowcase(_ context.Context) {
 	kvStore := sync.Map{}
 
 	kvStore.Store("key", "value")                        // store key value
